@@ -11,38 +11,36 @@
 ##      [3,]   -1    0    1                                                                                             ##
 ##                                                                                                                      ##
 ## To subsequently access the inverse of the matrix from the cache call:                                                ##
-## amatrix$getinverse()                                                                                                 ##
+##      amatrix$getinverse()                                                                                            ##
 ##########################################################################################################################
 
 
-## makeCacheMatrix creates an object that encapsulate the original matrix(x) and the cache of the matrix's inverse(m)
+## makeCacheMatrix creates an object that encapsulate the original matrix(x) and the cache of the matrix's inverse(inv_x)
 ## There are 4 functions defined for the object
 ## get() : will return the original matrix(x)
 ## Set(y) : will override the values of matrix(x) with the new matrix (y) and reset the cache to NULL
-## getinverse(): will return the inverse of the original matrix from the cache (m).
+## getinverse(): will return the inverse of the original matrix from the cache (inv_x).
 ## note: you must first call cacheSolve() once inorder to update the cache with the inverse of the matrix
 ## setinverse(inverse): will set the cache with a given value. 
 ## note: this function is called by cacheSolve(). If called directly, the input value provided is the inverse of the original matrix(x)
-
 makeCacheMatrix <- function(x = matrix()) {
         # create the cache and set it to NULL
-        m <- NULL
+        inv_x <- NULL
         # update the matrix with new values
         set <- function(y) {
                 x <<- y
                 # reset the cache defined in the parent makeCacheMatrix
-                m <<- NULL
+                inv_x <<- NULL
         }
         # return the original matrix x that was passed during the object creation or updated using the set()
         get <- function() x
-        # update the cache (m) defined in the parent makeCacheMatrix with the inverse of the matrix
-        setinverse <- function(inverse) m <<- inverse
+        # update the cache (inv_x) defined in the parent makeCacheMatrix with the inverse of the matrix
+        setinverse <- function(inverse) inv_x <<- inverse
         # get the inverse matrix from the cache
-        getinverse <- function() m
+        getinverse <- function() inv_x
         list(set = set, get = get,
              setinverse = setinverse,
              getinverse = getinverse)       
-  
 }
 
 ## cacheSolve() computes the inverse of the matrix object created by makeCacheMatrix and updates the cache. 
@@ -54,21 +52,20 @@ makeCacheMatrix <- function(x = matrix()) {
 ##      * The function assumes the original matrix in x is invertible 
 ##      Calling the function on a non invertible matrix will return error of the form: 
 ##      Lapack routine dgesv: system is exactly singular: U[3,3] = 0 
-
 cacheSolve <- function(x, ...) {
         # first check if the inverse is cached
-        m <- x$getinverse()
-        if(!is.null(m)) {
+        inv_x <- x$getinverse()
+        if(!is.null(inv_x)) {
                 message("getting cached data")
                 # The cache is not empty therefore returning the cached inverse
-                return(m)
+                return(inv_x)
         }
         # get the original matrix
         data <- x$get()
         # inverse the matrix 
-        m <- solve(data, ...)
+        inv_x <- solve(data, ...)
         # set the cache of x
-        x$setinverse(m)
+        x$setinverse(inv_x)
         # returns the matrix that is the inverse of the original matrix in 'x'
-        m
+        inv_x
 }
