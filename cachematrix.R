@@ -21,8 +21,8 @@
 ## Set(y) : will override the values of matrix(x) with the new matrix (y) and reset the cache to NULL
 ## getinverse(): will return the inverse of the original matrix from the cache (m).
 ## note: you must first call cacheSolve() once inorder to update the cache with the inverse of the matrix
-## setinverse(): will set the cache with a given value. The function assumes the value provided is the inverse of the original matrix(x)
-## note: this function is called by cacheSolve(). It is not recommended to call it directly 
+## setinverse(inverse): will set the cache with a given value. 
+## note: this function is called by cacheSolve(). If called directly, the input value provided is the inverse of the original matrix(x)
 
 makeCacheMatrix <- function(x = matrix()) {
         # create the cache and set it to NULL
@@ -37,7 +37,7 @@ makeCacheMatrix <- function(x = matrix()) {
         get <- function() x
         # update the cache (m) defined in the parent makeCacheMatrix with the inverse of the matrix
         setinverse <- function(inverse) m <<- inverse
-        ## get the inverse matrix from the cache
+        # get the inverse matrix from the cache
         getinverse <- function() m
         list(set = set, get = get,
              setinverse = setinverse,
@@ -49,26 +49,26 @@ makeCacheMatrix <- function(x = matrix()) {
 ## If the inverse has already been calculated and is found in the cache, it will retrieve the inverse from the cache.
 ## Returned values:
 ##      The inverse of the original matrix encapsulated in x
-## important notes:
+## Important notes:
 ##      * The function expects a matrix object created by using makeCacheMatrix
 ##      * The function assumes the original matrix in x is invertible 
 ##      Calling the function on a non invertible matrix will return error of the form: 
 ##      Lapack routine dgesv: system is exactly singular: U[3,3] = 0 
 
 cacheSolve <- function(x, ...) {
-        ## first check if the inverse is cached
+        # first check if the inverse is cached
         m <- x$getinverse()
         if(!is.null(m)) {
                 message("getting cached data")
-                ## The cache is not empty therefore returning the cached inverse
+                # The cache is not empty therefore returning the cached inverse
                 return(m)
         }
         # get the original matrix
         data <- x$get()
-        ## inverse the matrix 
+        # inverse the matrix 
         m <- solve(data, ...)
-        ## set the cache of x
+        # set the cache of x
         x$setinverse(m)
-        ## Returns the matrix that is the inverse of the original matrix in 'x'
+        # returns the matrix that is the inverse of the original matrix in 'x'
         m
 }
